@@ -1,3 +1,5 @@
+package "curl"
+
 template "/usr/local/sbin/setup-elastic-snapshot" do
   source "elasticsearch.setup-snapshot.sh.erb"
   mode 0755
