@@ -16,6 +16,6 @@ curl -XPUT "http://${ES_HOSTNAME}:9200/_snapshot/s3_<%= node[:elasticsearch][:cl
         "bucket": "<%= node[:elasticsearch][:s3_snapshot][:bucket] %>",
         "region": "<%= node[:elasticsearch][:s3_snapshot][:region] %>",
         "base_path": "<%= node[:elasticsearch][:s3_snapshot][:base_path] || '/' %>",
-        "server_side_encryption": <%= node[:elasticsearch][:s3_snapshot][:server_side_encryption] || false %>",
+        "server_side_encryption": <%= node[:elasticsearch][:s3_snapshot][:server_side_encryption] || false %>
     }
 }'
