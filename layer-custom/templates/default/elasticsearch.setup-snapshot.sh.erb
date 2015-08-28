@@ -2,6 +2,14 @@
 
 ES_HOSTNAME=${1:?"ElasticSearch hostname missing"}
 
+for i in `seq 1 6` ; do
+  nc -q 1 localhost 9200 </dev/null > /dev/null
+  if [ $? -ne 0 ] ; then
+    echo "Waiting for ElasticSearch to come online..."
+    sleep 10
+  fi
+done
+
 curl -XPUT "http://${ES_HOSTNAME}:9200/_snapshot/s3_<%= node[:elasticsearch][:cluster][:name] %>" -d '{
     "type": "s3",
     "settings": {
