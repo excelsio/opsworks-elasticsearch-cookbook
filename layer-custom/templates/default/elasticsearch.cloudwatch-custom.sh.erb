@@ -1,2 +1,20 @@
 #!/bin/sh
-aws cloudwatch put-metric-data --region <%= node[:opsworks][:instance][:region] %> --namespace "ElasticSearch-<%= node.elasticsearch[:cluster][:name] %>" --metric-name "number_of_data_nodes" --unit "Count" --value "`curl -s 'http://localhost:9200/_cluster/health' | python -c 'import json,sys;obj=json.load(sys.stdin);print obj["number_of_data_nodes"]'`"
+
+NUM_DATA_NODES=`curl -s 'http://localhost:9200/_cluster/health' | python -c 'import json,sys;obj=json.load(sys.stdin);print obj["number_of_data_nodes"]'`
+KB_FREE=`df -k | grep <%= node.elasticsearch[:path][:data] %> | awk '{print $4}'`
+PCT_FREE=`df -k | grep <%= node.elasticsearch[:path][:data] %> | awk '{print $5}' | sed 's,%,,'
+
+aws cloudwatch put-metric-data --region <%= node[:opsworks][:instance][:region] %> \
+  --namespace "ElasticSearch-<%= node.elasticsearch[:cluster][:name] %>" \
+  --metric-name "number_of_data_nodes" --unit "Count" \
+  --value $NUM_DATA_NODES
+
+aws cloudwatch put-metric-data --region <%= node[:opsworks][:instance][:region] %> \
+  --namespace "ElasticSearch-<%= node.elasticsearch[:cluster][:name] %>" \
+  --metric-name "disk_free" --unit "Kilobytes" \
+  --value $KB_FREE
+
+aws cloudwatch put-metric-data --region <%= node[:opsworks][:instance][:region] %> \
+  --namespace "ElasticSearch-<%= node.elasticsearch[:cluster][:name] %>" \
+  --metric-name "disk_free_percent" --unit "Percent" \
+  --value $PCT_FREE
